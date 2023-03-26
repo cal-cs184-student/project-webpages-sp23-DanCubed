@@ -1,7 +1,210 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-2 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>  
+    div.padded {  
+      padding-top: 0px;  
+      padding-right: 100px;  
+      padding-bottom: 0.25in;  
+      padding-left: 100px;  
+    }  
+  </style> 
+<title>Duan Lyu  |  CS 184</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+<br />
+<h1 align="middle">Assignment 3-2: Additional Features to PathTracer</h1>
+    <h2 align="middle">Duan Lyu</h2>
+    <h2 align="middle">Website URL: <a href="https://cal-cs184-student.github.io/project-webpages-sp23-DanCubed/proj3-2/index.html">https://cal-cs184-student.github.io/project-webpages-sp23-DanCubed/proj3-2/index.html</a></h2>
+
+    <div class="padded">
+
+        
+        * NOTE: For this project, you will choose TWO out of the four given parts to complete. One of those parts must be Part 1 or Part 2. In other words, you can choose any combination of two parts except the pair (Part 3, Part 4).
+
+
+        <h3 align="middle">Part 1. Mirror and Glass Materials</h3>
+
+        <p><b>
+            Show a sequence of six images of scene `CBspheres.dae` rendered with `max_ray_depth` set to 0, 1, 2, 3, 4, 5, and 100. The other settings should be at least 64 samples per pixel and 4 samples per light. Make sure to include all screenshots.
+        </b></p>
+        <div align="middle">
+          <table style="width:100%">
+            <tr align="center">
+              <td>
+                <img src="images/CBspheres_s128_l5_m0.png" align="middle" width="400px"/>
+                <figcaption>CBspheres.dae. m=0, s=128, l=5</figcaption>
+              </td>
+              <td>
+                <img src="images/CBspheres_s128_l5_m1.png" align="middle" width="400px"/>
+                <figcaption>CBspheres.dae. m=1</figcaption>
+              </td>
+            </tr>
+            <tr align="center">
+              <td>
+                <img src="images/CBspheres_s128_l5_m2.png" align="middle" width="400px"/>
+                <figcaption>CBspheres.dae. m=2</figcaption>
+              </td>
+              <td>
+                <img src="images/CBspheres_s128_l5_m3.png" align="middle" width="400px"/>
+                <figcaption>CBspheres.dae. m=3</figcaption>
+              </td>
+            </tr>
+            <tr align="center">
+              <td>
+                <img src="images/CBspheres_s128_l5_m4.png" align="middle" width="400px"/>
+                <figcaption>CBspheres.dae. m=4</figcaption>
+              </td>
+              <td>
+                <img src="images/CBspheres_s128_l5_m5.png" align="middle" width="400px"/>
+                <figcaption>CBspheres.dae. m=5</figcaption>
+              </td>
+            </tr>
+            <tr align="center">
+              <td>
+                <img src="images/CBspheres_s128_l5_m100.png" align="middle" width="400px"/>
+                <figcaption>CBspheres.dae, m=100</figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <br>
+        <p><b>
+            Point out the new multibounce effects that appear in each image. 
+        </b></p>
+        <p>
+            For m=0, only the light source is visible and nothing else.
+
+        </p>
+        <p>
+            For m=1, the walls and floor are now illuminated but the ceiling is still dark, and the two spheres remain mostly dark as well except fo the reflected highlights from the light source now showing up on them. For the glass sphere on the right there appears to be some noise in the highlight.
+
+        </p>
+        <p>
+            For m=2, the ceiling is now illuminated, and the mirror sphere on the left also shows full reflected illumination (however in the reflection of the sphere the ceiling remains dark). The glass sphere remains mostly dark, but a very thin layer of reflected illumination also appears on it as well.
+
+        </p>
+        <p>
+            For m=3, the scene gets overall brighter, and the ceiling is now illuminated in the reflection of the left sphere. The right sphere now becomes transparent, and a highlight appears in its shadow.
+
+        </p>
+        <p>
+            For m=4, the scene gets brighter again, and a small bright spot appears on the right wall.
+
+        </p>
+        <p>
+            For m=5 and m=100, the scene continues to get brighter but no more significant visual effects appear.
+
+        </p>
+        <br>
+        <p><b>
+            Explain how these bounce numbers relate to the particular effects that appear. Make sure to include all screenshots.
+        </b></p>
+        <p>
+            For m=0, it is zero bounce radiance so only the rays that directly intersect with a light source will return with its emission value. Thus we only see the light panel and nothing else.
+
+        </p>
+        <p>
+            For m=1, the walls and floor are illuminated via direct illumination, but the ceiling requires at least 2 bounces (light source-scene-ceiling) so it remains dark. Both reflection and refraction from the scene requires more than 1 bounces, with the exception being the direct path of (light source-sphere), therefore we see nothing but the direct reflection of the light source on the two spheres. The glass sphere has more noise because it samples both reflection and refraction, the latter of which still returns 0 at this depth.
+
+        </p>
+        <p>
+            For m=2, the ceiling is now illuminated via the 2 bounce rays, and most of the reflections can now be rendered because it only requires 2 bounces (light source-scene-sphere) so we see it on the mirror sphere along with the glass sphere (to a much lesser degree on the latter because only a small portion of the radiance comes from reflection). One exception to this is that areas like the ceiling which requires at least 2 bounces to be illuminated required at least 3 bounces to show up in the reflection, so the ceiling remains dark in the refletion of the mirror sphere. In general, illumination that requires x bounces requires x+1 bounces in the reflection (one extra bounce on the sphere itself), so the reflected scene by the mirror sphere is always of one less depth than the actual scene. 
+
+        </p>
+        <p>
+            For m=3, the scene gets brighter from global illumination, and the ceiling is now illuminated in the reflection because of the reasons stated above. Refraction for the glass sphere can now be rendered because it requires at least 3 bounces (light source-scene-entering sphere-exiting sphere, or light source-entering sphere-exiting sphere-scene in the case of shadow highlight).
+
+        </p>
+        <p>
+            For m=4, the scene gets brighter from global illumination, and the small bright spot on the right wall is the result of the 4-bounces path (light source-entering sphere-exiting sphere-floor-wall).
+
+        </p>
+        <p>
+            For m=5 and m=100, the scene continues to get brighter from global illumination.
+
+        </p>
+        <br>
+
+
+        <h3 align="middle">Part 2. Microfacet Material</h3>
+        <p><b>
+            Show a screenshot sequence of 4 images of scene `CBdragon_microfacet_au.dae` rendered with $\alpha$ set to 0.005, 0.05, 0.25 and 0.5. The other settings should be at least 128 samples per pixel and 1 samples per light. The number of bounces should be at least 5. Describe the differences between different images. Note that, to change the $\alpha$, just open the .dae file and search for `microfacet`.
+        </b></p>
+        <div align="middle">
+          <table style="width:100%">
+            <tr align="center">
+              <td>
+                <img src="images/CBdragon_microfacet_s256_l2_m5_a005.png" align="middle" width="400px"/>
+                <figcaption>CBdragon_microfacet_au.dae. alpha=0.005, s=256, l=2, m=5</figcaption>
+              </td>
+              <td>
+                <img src="images/CBdragon_microfacet_s256_l2_m5_a05.png" align="middle" width="400px"/>
+                <figcaption>CBdragon_microfacet_au.dae. alpha=0.05</figcaption>
+              </td>
+            </tr>
+            <tr align="center">
+              <td>
+                <img src="images/CBdragon_microfacet_s256_l2_m5_a25.png" align="middle" width="400px"/>
+                <figcaption>CBdragon_microfacet_au.dae. alpha=0.25</figcaption>
+              </td>
+              <td>
+                <img src="images/CBdragon_microfacet_s256_l2_m5_a5.png" align="middle" width="400px"/>
+                <figcaption>CBdragon_microfacet_au.dae. alpha=0.5</figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+            The smaller the alpha value is, the smoother the implied microfacet surface is. This means that the sampled normal h will on average be closer to the actual surface normal n, resulting in the material looking more reflective. For alpha=0.005, the dragon essentially looked like a gold-colored mirror, reflecting everything around it. The highlight area is relatively small because there is only a small area on the dragon where the surface normal (or a vector very close to it) will reflect the light rays from the light source towards the direction of the camera. For alpha=0.05, the dragon is still very reflective but looks less like a complete mirror and instead more like a highly glossy material. The highlight areas grew a little bit because there is now more leeway in terms of how much the sampled normal can deviate from the actual normal. For alpha=0.25 the dragon now has a large highlight area but still quite a bit of reflections on it, and is starting to resemble a metallic surface a lot more. For alpha=0.5 the dragon now looks very much like metal, with a lot of diffusion, a large highlight area, and only some faint reflected radiance.
+
+        </p>
+        <p>
+            Another interesting thing to note was that at low alpha values there was a lot more noise in the pictures shown, especially the ‘firefly” visual artifacts that make a pixel appear much brighter than its surroundings. I wonder why this is the case.
+
+        </p>
+        <br>
+        <p><b>
+            Show two images of scene `CBbunny_microfacet_cu.dae` rendered using cosine hemisphere sampling (default) and your importance sampling. The sampling rate should be fixed at 64 samples per pixel and 1 samples per light. The number of bounces should be at least 5. Briefly discuss their difference.
+        </b></p>
+        <div align="middle">
+          <table style="width:100%">
+            <tr align="center">
+              <td>
+                <img src="images/CBbunny_microfacet_s64_l1_m5_cos.png" align="middle" width="400px"/>
+                <figcaption>CBbunny_microfacet_cu.dae. cosine hemisphere sampling, s=64, l=1, m=5</figcaption>
+              </td>
+              <td>
+                <img src="images/CBbunny_microfacet_s64_l1_m5_mysamp.png" align="middle" width="400px"/>
+                <figcaption>CBbunny_microfacet_cu.dae. importance sampling</figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+            Cosine hemisphere sampling was a lot more noisy in general. The bunny it rendered initially appeared darker than importance sampling as well, but upon closer inpection I realized that it is rendering the same material, just with a lot more noise in terms of black spots. These noise are largely gone in importance sampling, but interestingly the aformentioned firefly artifacts remained numerous and mostly uneffected by whichever sampling method I choose.
+        </p>
+        <br>
+        <p><b>
+            Show at least one image with some other conductor material, replacing `eta` and `k`. Note that you should look up values for real data rather than modifying them arbitrarily. Tell us what kind of material your parameters correspond to. 
+        </b></p>
+        <div align="middle">
+          <table style="width:100%">
+            <tr align="center">
+              <td>
+                <img src="images/CBdragon_microfacet_s256_l2_m5_a5_cobalt.png" align="middle" width="400px"/>
+                <figcaption>CBdragon_microfacet_au.dae. cobalt, s=256, l=2, m=5</figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+            For this picture I chose the material cobalt. I searched up its eta values: 2.1849 2.05 1.7925 at RGB wavelangths, and its k values: 4.0971 3.82 3.3775 at RGB wavelangths. The result was a shiny white/silver material!        </p>
+        <br>
+
+    </div>
+</body>
 </html>
+
