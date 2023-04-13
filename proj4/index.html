@@ -73,6 +73,29 @@
 
   <br><br>
 
+  <div>
+    <h2 align="middle">Overview</h2>
+  </div>
+
+  <p>
+    In this project I implemented a real-time 3D simulation of cloth using the mass and spring system. I used a combination of physics, mathematics, and coding to achieve a convincing look for the cloth at the end. During the process I learned how to calculate the underlying forces for a spring mass system, how to calculate collisions, and how to code shaders in GLSL. I thought the end product was very cool, especially when I added my own textures to the cloth!
+  </p>
+  <p>
+    In part 1 I completed the data structure for the spring and mass system that is used to simulate the cloth. I first iterated through the grid and constructed the PointMass objects, then iterated through the pinned list to pin all the points, and finally iterated through all the points again to construct all the springs. 
+  </p>
+  <p>
+    In part 2 I computed the forces for each point at a time step, then used Verlet integration to update the position of the points according to its force for the next time step. I also implemented a constraint on the springs to prevent any unexpected behaviors.
+  </p>
+  <p>
+    In part 3 I implemented collision with other objects by iterating through the points to see if their projected position will cross into/under the sphere/plane, and adjusting them in that case.
+  </p>
+  <p>
+    In part 4 I implemented self collision by building a special hashmap and making sure that no points within the same hash get too close to each other. For the hash function I chose to add together the 3D box’s coordinates, each multiplied by a different constant.
+  </p>
+  <p>
+    In part 5 I implemented various shaders for the cloth to give it cool appearances. I coded in GLSL and modified various vertex and fragment shaders.
+  </p>
+
   <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-1">
   <h2 align="middle">Part 1: Masses and springs</h2>
   </a>
@@ -383,7 +406,7 @@
 
 
   <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-5">
-  <h2 align="middle">Part 5: Cloth Sim</h2>
+  <h2 align="middle">Part 5: Shaders</h2>
   </a>
 
     <blockquote><b>
